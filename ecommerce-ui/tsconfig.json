@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    // BOTH required for Lit decorators — never change these two (lit-web-apps golden rule #1):
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "paths": {
+      "@backend/*": ["../ecommerce/src/*"]
+    }
+  },
+  "include": ["src", "server", "test", "vite.config.ts", "vitest.config.ts"]
+}

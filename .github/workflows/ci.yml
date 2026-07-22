@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Order matters: ecommerce-ui typechecks against ecommerce's sources,
+      # which resolve `effect` from ecommerce/node_modules.
+      - name: Install
+        run: npm run install:all
+
+      - name: Typecheck (all apps)
+        run: npm run typecheck
+
+      - name: Test shortlink
+        run: npm test --prefix shortlink
+
+      - name: Test ecommerce
+        run: npm test --prefix ecommerce
+
+      - name: Install Playwright Chromium (ecommerce-ui browser tests)
+        run: npx --prefix ecommerce-ui playwright install --with-deps chromium
+
+      - name: Test ecommerce-ui
+        run: npm test --prefix ecommerce-ui

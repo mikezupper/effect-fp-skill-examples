@@ -1,0 +1,13 @@
+{
+  "name": "effect-fp-skill-examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:all": "npm ci --prefix shortlink && npm ci --prefix ecommerce && npm ci --prefix ecommerce-ui",
+    "typecheck": "npm run typecheck --prefix shortlink && npm run typecheck --prefix ecommerce && npm run typecheck --prefix ecommerce-ui",
+    "test": "npm run typecheck && npm test --prefix shortlink && npm test --prefix ecommerce && npm test --prefix ecommerce-ui",
+    "dev:api": "PORT=3001 npm run dev --prefix ecommerce",
+    "dev:ui": "npm run dev --prefix ecommerce-ui",
+    "dev": "sh -c 'trap \"kill 0\" INT TERM; npm run dev:api & npm run dev:ui & wait'"
+  }
+}

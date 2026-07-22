@@ -1,0 +1,30 @@
+{
+  "name": "ecommerce-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server/dev.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@lit-labs/signals": "^0.3.0",
+    "@lit-labs/ssr": "^4.1.0",
+    "@lit-labs/ssr-client": "^1.1.8",
+    "@lit/task": "^1.0.3",
+    "hono": "^4.6.0",
+    "lit": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@vitest/browser": "^4.0.0",
+    "@vitest/browser-playwright": "^4.1.10",
+    "effect": "^3.22.0",
+    "playwright": "^1.50.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0",
+    "vitest": "^4.0.0"
+  }
+}

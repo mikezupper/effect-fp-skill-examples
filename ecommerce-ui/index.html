@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Railway Supply Co.</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    <style>
+      /* avoid FOUC while lazy component definitions load */
+      :not(:defined) {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <app-shell></app-shell>
+    <script type="module" src="/src/entry-client.ts"></script>
+  </body>
+</html>

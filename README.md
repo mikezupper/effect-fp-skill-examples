@@ -54,7 +54,7 @@ The engineering philosophy running through everything comes from Scott Wlaschin'
 | Skill | Repo | What it mandates |
 |---|---|---|
 | **effect-fp-skill** | [mikezupper/effect-fp-skill](https://github.com/mikezupper/effect-fp-skill) | Effect everywhere: typed error channels, branded types, `Schema` at every boundary, capability-based DI via Layers, one runtime entry point, production checklist as definition-of-done, mandatory self-review pass |
-| **modern-css** | local skill | Platform-native CSS: `@layer` architecture, one-hue oklch token systems, `light-dark()` theming, container queries, `<dialog>`/popover, `@starting-style` animations — no utility frameworks, no JS layout hacks |
+| **modern-css** | [mikezupper/modern-css-skill](https://github.com/mikezupper/modern-css-skill) | Platform-native CSS: `@layer` architecture, one-hue oklch token systems, `light-dark()` theming, container queries, `<dialog>`/popover, `@starting-style` animations — no utility frameworks, no JS layout hacks |
 | **lit-web-apps** | [mikezupper/lit-web-apps-skill](https://github.com/mikezupper/lit-web-apps-skill) | Pure Lit applications: SSR/SSG/CSR from one pipeline, platform-native routing (URLPattern + Navigation API), signals/context/task state ladder, real-browser testing |
 
 ## Quick start

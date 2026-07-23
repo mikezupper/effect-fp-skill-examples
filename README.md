@@ -1,7 +1,7 @@
 # effect-fp-skill-examples
 
 [![CI](https://github.com/mikezupper/effect-fp-skill-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/mikezupper/effect-fp-skill-examples/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-CC_BY_4.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
+[![License](https://img.shields.io/badge/license-CC_BY_4.0-lightgrey)](LICENSE)
 [![Effect](https://img.shields.io/badge/Effect-3.22-black)](https://effect.website)
 [![Lit](https://img.shields.io/badge/Lit-3.3-324FFF?logo=lit&logoColor=white)](https://lit.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x_strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)

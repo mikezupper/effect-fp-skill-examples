@@ -1,7 +1,7 @@
 # effect-fp-skill-examples
 
 [![CI](https://github.com/mikezupper/effect-fp-skill-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/mikezupper/effect-fp-skill-examples/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-CC_BY_4.0-lightgrey)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/docs-CC_BY_4.0-lightgrey)](LICENSE-DOCS)
 [![Effect](https://img.shields.io/badge/Effect-4.0-black)](https://effect.website)
 [![Lit](https://img.shields.io/badge/Lit-3.3-324FFF?logo=lit&logoColor=white)](https://lit.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x_strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -196,4 +196,4 @@ effect-fp-skill-examples/
 
 ## License
 
-Text, markup, and code licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) © Mike Zupper. The skills' engineering philosophy credits [Scott Wlaschin](https://fsharpforfunandprofit.com), [Effect](https://effect.website), and [Lit](https://lit.dev); none of them endorse this repo.
+Code licensed under the [MIT License](LICENSE); documentation (Markdown and the images under `docs/`) licensed under [CC BY 4.0](LICENSE-DOCS) © 2026 Mike Zupper. The skills' engineering philosophy credits [Scott Wlaschin](https://fsharpforfunandprofit.com), [Effect](https://effect.website), and [Lit](https://lit.dev); none of them endorse this repo.

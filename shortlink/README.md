@@ -2,11 +2,13 @@
 
 URL shortener with expiring links — the minimal complete demonstration of the [effect-fp-skill](https://github.com/mikezupper/effect-fp-skill): every rule of the skill in ~250 lines.
 
+Built on **Effect 4** (`effect` 4.0.1 — HTTP API modules come from `effect/http-api`, test services from `effect/testing`; no `@effect/platform`), `@effect/platform-node` 4.0.1, `@effect/vitest` 4.0.1 on Vitest 5, TypeScript 7.
+
 ## Run
 
 ```bash
 npm ci
-npm run dev            # http://localhost:3000, Swagger UI at /docs   (PORT to override)
+npm run dev            # http://localhost:3000, Swagger UI at /docs, spec at /openapi.json   (PORT to override)
 npm test               # 8 tests: property-based round-trips + TestClock expiry
 npm run typecheck
 ```
@@ -25,9 +27,9 @@ sleep 61 && curl localhost:3000/links/effect-docs   # 410 LinkExpired
 | Skill area | Where |
 |---|---|
 | Branded types + schema boundary | `src/domain/link.ts` — `Slug`, `TargetUrl`, `ShortLink` |
-| Railway errors → HTTP statuses | `src/domain/errors.ts` + `src/http/api.ts` (409/404/410) |
-| Capability-based DI | `src/services/LinkRepo.ts` (`Ref`-backed, swappable by Layer) |
-| Clock/Random as services | `src/workflows/links.ts` — testable time & slug generation |
-| One runtime entry point | `src/main.ts` — `Layer.launch` + `runMain` |
-| Property tests from schemas | `test/domain.test.ts` — `Arbitrary.make(ShortLink)` |
-| Virtual time | `test/workflows.test.ts` — 61 minutes of TTL in ~10ms via `TestClock` |
+| Railway errors → HTTP statuses | `src/domain/errors.ts` (HTTP-free) + `src/http/api.ts` (`HttpApiSchema.status` 409/404/410) |
+| Capability-based DI | `src/services/LinkRepo.ts` (`Context.Service` + `Ref`-backed `layerMemory`, swappable by Layer) |
+| Clock/Random as services | `src/workflows/links.ts` — `Effect.fn` workflows; testable time & slug generation |
+| One runtime entry point | `src/main.ts` — `HttpRouter.serve` + `Layer.launch` + `runMain` |
+| Property tests from schemas | `test/domain.test.ts` — `it.prop` with arbitraries derived from `ShortLink` |
+| Virtual time | `test/workflows.test.ts` — 61 minutes of TTL in ~10ms via `TestClock` (`effect/testing`) |

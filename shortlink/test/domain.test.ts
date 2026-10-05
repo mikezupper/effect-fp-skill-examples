@@ -1,4 +1,4 @@
-import { assert, describe, it } from "@effect/vitest"
+import { describe, it } from "@effect/vitest"
 import { DateTime, Equal, Option, Schema } from "effect"
 import { ShortLink, isExpired } from "../src/domain/link.js"
 
@@ -15,7 +15,7 @@ describe("ShortLink schema", () => {
 describe("isExpired", () => {
   it.prop("a link without expiry never expires", [ShortLink], ([link]) => {
     const eternal = new ShortLink({ ...link, expiresAt: Option.none() })
-    const endOfTime = DateTime.unsafeMake(8.64e15) // max representable Date instant
+    const endOfTime = DateTime.makeUnsafe(8.64e15) // max representable Date instant
     return isExpired(eternal, endOfTime) === false
   })
 
@@ -24,7 +24,7 @@ describe("isExpired", () => {
       onNone: () => true, // vacuous — covered above
       onSome: (expiresAt) =>
         isExpired(link, expiresAt) === true &&
-        isExpired(link, DateTime.subtract(expiresAt, { millis: 1 })) === false,
+        isExpired(link, DateTime.subtract(expiresAt, { milliseconds: 1 })) === false,
     })
   })
 })

@@ -1,5 +1,6 @@
 import { assert, describe, it } from "@effect/vitest"
-import { Duration, Effect, Option, Schema, TestClock } from "effect"
+import { Duration, Effect, Option, Schema } from "effect"
+import { TestClock } from "effect/testing"
 import { Slug, TargetUrl } from "../src/domain/link.js"
 import { LinkRepo } from "../src/services/LinkRepo.js"
 import { createLink, resolveLink } from "../src/workflows/links.js"
@@ -8,7 +9,7 @@ import { createLink, resolveLink } from "../src/workflows/links.js"
 const slug = Schema.decodeSync(Slug)("my-link")
 const target = Schema.decodeSync(TargetUrl)("https://example.com/some/page")
 
-const TestLayer = LinkRepo.Default
+const TestLayer = LinkRepo.layerMemory
 
 describe("createLink / resolveLink", () => {
   it.effect("created links resolve to their target", () =>

@@ -4,7 +4,8 @@ import { OrderId } from "./order.js"
 import { Email } from "./user.js"
 
 // All Schema.TaggedError: they cross the HTTP boundary. Each carries what a handler
-// needs to react — never just a message.
+// needs to react — never just a message. HTTP status codes are NOT set here: the
+// domain knows nothing about HTTP; the api definition (http/api.ts) maps them.
 
 export class EmailTaken extends Schema.TaggedError<EmailTaken>()("EmailTaken", {
   email: Email,

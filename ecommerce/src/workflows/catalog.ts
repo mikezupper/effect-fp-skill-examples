@@ -3,50 +3,41 @@ import { buildCategoryTree, type CategoryTree, Product, ProductId } from "../dom
 import { ProductNotFound } from "../domain/errors.js"
 import { ProductRepo } from "../services/ProductRepo.js"
 
-export const categoryNavigation = (): Effect.Effect<
-  ReadonlyArray<CategoryTree>,
-  never,
-  ProductRepo
-> =>
-  Effect.gen(function* () {
+export const categoryNavigation = Effect.fn("Catalog.categoryNavigation")(
+  function* (): Effect.fn.Return<ReadonlyArray<CategoryTree>, never, ProductRepo> {
     const repo = yield* ProductRepo
-    const categories = yield* repo.listCategories()
+    const categories = yield* repo.listCategories
     return buildCategoryTree(categories) // pure
-  }).pipe(Effect.withSpan("Catalog.categoryNavigation"))
+  }
+)
 
 export interface BrowseQuery {
   readonly search: Option.Option<string>
   readonly categorySlug: Option.Option<string>
 }
 
-export const browseProducts = (
+export const browseProducts = Effect.fn("Catalog.browseProducts")(function* (
   query: BrowseQuery
-): Effect.Effect<ReadonlyArray<Product>, never, ProductRepo> =>
-  Effect.gen(function* () {
-    const repo = yield* ProductRepo
-    // Unknown category slug → empty result, not an error: browsing is forgiving.
-    const categoryId = yield* Option.match(query.categorySlug, {
-      onNone: () => Effect.succeed(Option.none()),
-      onSome: (slug) =>
-        repo.findCategoryBySlug(slug).pipe(Effect.map(Option.map((c) => c.id))),
-    })
-    if (Option.isSome(query.categorySlug) && Option.isNone(categoryId)) {
-      return []
-    }
-    return yield* repo.list({ search: query.search, categoryId })
-  }).pipe(Effect.withSpan("Catalog.browseProducts"))
+): Effect.fn.Return<ReadonlyArray<Product>, never, ProductRepo> {
+  const repo = yield* ProductRepo
+  // Unknown category slug → empty result, not an error: browsing is forgiving.
+  const categoryId = yield* Option.match(query.categorySlug, {
+    onNone: () => Effect.succeedNone,
+    onSome: (slug) => repo.findCategoryBySlug(slug).pipe(Effect.map(Option.map((c) => c.id))),
+  })
+  if (Option.isSome(query.categorySlug) && Option.isNone(categoryId)) {
+    return []
+  }
+  return yield* repo.list({ search: query.search, categoryId })
+})
 
-export const getProduct = (
+export const getProduct = Effect.fn("Catalog.getProduct")(function* (
   id: ProductId
-): Effect.Effect<Product, ProductNotFound, ProductRepo> =>
-  Effect.gen(function* () {
-    const repo = yield* ProductRepo
-    return yield* repo.findById(id).pipe(
-      Effect.flatMap(
-        Option.match({
-          onNone: () => new ProductNotFound({ productId: id }),
-          onSome: Effect.succeed,
-        })
-      )
-    )
-  }).pipe(Effect.withSpan("Catalog.getProduct"))
+): Effect.fn.Return<Product, ProductNotFound, ProductRepo> {
+  const repo = yield* ProductRepo
+  const product = yield* repo.findById(id)
+  if (Option.isNone(product)) {
+    return yield* new ProductNotFound({ productId: id })
+  }
+  return product.value
+})

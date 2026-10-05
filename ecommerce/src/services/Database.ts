@@ -1,6 +1,6 @@
-import { SqlClient } from "@effect/sql"
 import { SqliteClient } from "@effect/sql-sqlite-node"
 import { Config, Effect, Layer, String as Str } from "effect"
+import { SqlClient } from "effect/sql"
 
 // DB stays snake_case, domain stays camelCase — defined once, shared by the live
 // layer and the in-memory test layer so they cannot drift.
@@ -10,14 +10,14 @@ export const sqlTransforms = {
 } as const
 
 export const SqlLive = SqliteClient.layerConfig({
-  filename: Config.string("DB_FILE").pipe(Config.withDefault("ecommerce.db")),
+  filename: Config.String("DB_FILE").pipe(Config.withDefault("ecommerce.db")),
   transformQueryNames: Config.succeed(sqlTransforms.transformQueryNames),
   transformResultNames: Config.succeed(sqlTransforms.transformResultNames),
 })
 
 // Example-sized migrations: idempotent DDL + seed run at startup.
-// A production app would use @effect/sql Migrator with numbered files instead
-// (see the skill's references/database.md).
+// A production app would use SqliteMigrator.layer({ loader: SqliteMigrator.fromFileSystem(dir) })
+// (effect/sql Migrator) with numbered files instead (see the skill's references/database.md).
 const ddl = Effect.gen(function* () {
   const sql = yield* SqlClient.SqlClient
 

@@ -29,9 +29,11 @@ export class Router implements ReactiveController {
   }
 
   hostConnected() {
-    if ("navigation" in window) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(window as any).navigation.addEventListener("navigate", (e: any) => {
+    // Navigation API is in TS's DOM lib now, but not in every browser — check at runtime.
+    // (Checking `window.navigation` rather than `"navigation" in window` keeps the
+    // else-branch from narrowing `window` to never.)
+    if (typeof window.navigation !== "undefined") {
+      window.navigation.addEventListener("navigate", (e) => {
         if (!e.canIntercept || e.hashChange || e.downloadRequest) return
         const url = new URL(e.destination.url)
         if (!matchRoute(url)) return // let the browser handle unknown URLs

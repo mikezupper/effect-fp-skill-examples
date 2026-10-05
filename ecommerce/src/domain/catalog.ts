@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Schema } from "effect"
+import { Array as Arr, Option, Result, Schema } from "effect"
 
 // ---------- Branded primitives ----------
 
@@ -12,26 +12,30 @@ export const Sku = Schema.String.pipe(Schema.brand("Sku"))
 export type Sku = typeof Sku.Type
 
 // Money as integer minor units — never floats for currency.
-export const Cents = Schema.Int.pipe(Schema.nonNegative(), Schema.brand("Cents"))
+export const Cents = Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)).pipe(Schema.brand("Cents"))
 export type Cents = typeof Cents.Type
+
+// Display text: non-empty with no surrounding whitespace (a check, not a transform —
+// untrimmed input is rejected, never silently rewritten).
+export const NonEmptyTrimmedString = Schema.Trimmed.check(Schema.isNonEmpty())
 
 // ---------- Domain records ----------
 
 export class Category extends Schema.Class<Category>("Category")({
   id: CategoryId,
-  name: Schema.NonEmptyTrimmedString,
-  slug: Schema.NonEmptyTrimmedString,
+  name: NonEmptyTrimmedString,
+  slug: NonEmptyTrimmedString,
   parentId: Schema.OptionFromNullOr(CategoryId),
 }) {}
 
 export class Product extends Schema.Class<Product>("Product")({
   id: ProductId,
   sku: Sku,
-  name: Schema.NonEmptyTrimmedString,
+  name: NonEmptyTrimmedString,
   description: Schema.String,
   priceCents: Cents,
   categoryId: CategoryId,
-  stock: Schema.Int.pipe(Schema.nonNegative()),
+  stock: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),
 }) {}
 
 // ---------- Category navigation (pure) ----------
@@ -44,12 +48,12 @@ export interface CategoryTree {
   readonly slug: string
   readonly children: ReadonlyArray<CategoryTree>
 }
-export const CategoryTree: Schema.Schema<CategoryTree> = Schema.Struct({
+export const CategoryTree: Schema.Codec<CategoryTree> = Schema.Struct({
   id: Schema.String,
   name: Schema.String,
   slug: Schema.String,
   children: Schema.Array(Schema.suspend(() => CategoryTree)),
-}).annotations({ identifier: "CategoryTree" }) // required for OpenAPI generation of recursive schemas
+}).annotate({ identifier: "CategoryTree" }) // required for OpenAPI generation of recursive schemas
 
 // Pure and TOTAL: flat category list -> forest. Every input category appears exactly
 // once. Missing parents make roots; cycle participants (self-parent, a↔b) are grafted
@@ -69,8 +73,8 @@ export const buildCategoryTree = (
         !visited.has(child.id) &&
         Option.isSome(child.parentId) &&
         Option.getOrThrow(child.parentId) === c.id
-          ? Option.some(build(child))
-          : Option.none()
+          ? Result.succeed(build(child))
+          : Result.failVoid
       ),
     }
   }
@@ -80,11 +84,11 @@ export const buildCategoryTree = (
       onSome: (parent) => parent === c.id || !ids.has(parent),
     })
   const roots = Arr.filterMap(categories, (c) =>
-    isRoot(c) ? Option.some(build(c)) : Option.none()
+    isRoot(c) ? Result.succeed(build(c)) : Result.failVoid
   )
   // Anything unreached is part of a cycle — graft it as a root.
   const grafted = Arr.filterMap(categories, (c) =>
-    visited.has(c.id) ? Option.none() : Option.some(build(c))
+    visited.has(c.id) ? Result.failVoid : Result.succeed(build(c))
   )
   return [...roots, ...grafted]
 }

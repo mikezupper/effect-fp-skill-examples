@@ -1,7 +1,9 @@
 import { Array as Arr, Schema } from "effect"
 import { Cents, Product } from "./catalog.js"
 
-export const Quantity = Schema.Int.pipe(Schema.between(1, 99), Schema.brand("Quantity"))
+export const Quantity = Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: 99 })).pipe(
+  Schema.brand("Quantity")
+)
 export type Quantity = typeof Quantity.Type
 
 export class CartLine extends Schema.Class<CartLine>("CartLine")({

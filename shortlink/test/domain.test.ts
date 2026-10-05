@@ -1,5 +1,5 @@
 import { describe, it } from "@effect/vitest"
-import { DateTime, Equal, Option, Schema } from "effect"
+import { Arbitrary, DateTime, Equal, Option, Schema } from "effect"
 import { ShortLink, isExpired } from "../src/domain/link.js"
 
 const encode = Schema.encodeSync(ShortLink)
@@ -19,7 +19,20 @@ describe("isExpired", () => {
     return isExpired(eternal, endOfTime) === false
   })
 
-  it.prop("a link is expired exactly when now >= expiresAt", [ShortLink], ([link]) => {
+  // The derived DateTime arbitrary reaches the representable minimum (-271821-04-20);
+  // subtracting 1ms from it yields an invalid (NaN) instant and the probe is meaningless,
+  // so keep expiresAt at least 1ms above the boundary.
+  const minMillis = -8_640_000_000_000_000
+  const ProbeableLink = Arbitrary.schema(ShortLink).pipe(
+    Arbitrary.filter((link) =>
+      Option.match(link.expiresAt, {
+        onNone: () => true,
+        onSome: (at) => DateTime.toEpochMillis(at) > minMillis,
+      })
+    )
+  )
+
+  it.prop("a link is expired exactly when now >= expiresAt", [ProbeableLink], ([link]) => {
     return Option.match(link.expiresAt, {
       onNone: () => true, // vacuous — covered above
       onSome: (expiresAt) =>

@@ -1,6 +1,7 @@
 {
   "name": "effect-fp-skill-examples",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "install:all": "npm ci --prefix shortlink && npm ci --prefix ecommerce && npm ci --prefix ecommerce-ui",

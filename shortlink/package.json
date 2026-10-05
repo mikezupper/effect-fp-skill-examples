@@ -1,6 +1,7 @@
 {
   "name": "shortlink",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "tsx src/main.ts",

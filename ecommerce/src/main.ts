@@ -1,7 +1,8 @@
 import { createServer } from "node:http"
-import { HttpApiBuilder, HttpApiSwagger } from "@effect/platform"
 import { NodeHttpServer, NodeRuntime } from "@effect/platform-node"
 import { Effect, Layer } from "effect"
+import { HttpRouter } from "effect/http"
+import { HttpApiBuilder, HttpApiSwagger } from "effect/http-api"
 import { AppConfig } from "./config.js"
 import { Api } from "./http/api.js"
 import { AuthLive, CartLive, CatalogLive, OrdersLive } from "./http/handlers.js"
@@ -18,27 +19,29 @@ import { UserRepo } from "./services/UserRepo.js"
 // The ONLY place that knows concrete implementations — and the only run* site.
 
 const AppServices = Layer.mergeAll(
-  UserRepo.Default,
-  SessionRepo.Default,
-  ProductRepo.Default,
-  CartRepo.Default,
-  OrderRepo.Default,
-  PasswordHasher.Default,
-  IdGen.Default
+  UserRepo.layer,
+  SessionRepo.layer,
+  ProductRepo.layer,
+  CartRepo.layer,
+  OrderRepo.layer,
+  PasswordHasher.layer,
+  IdGen.layer
 ).pipe(Layer.provideMerge(DatabaseLive)) // exposes SqlClient too (checkout transaction)
 
-const ApiLive = HttpApiBuilder.api(Api).pipe(
-  Layer.provide(Layer.mergeAll(AuthLive, CatalogLive, CartLive, OrdersLive)),
+const ApiRoutes = HttpApiBuilder.layer(Api, { openapiPath: "/openapi.json" }).pipe(
+  Layer.provide([AuthLive, CatalogLive, CartLive, OrdersLive]),
+  // Provided to the API layer itself (not just the handler groups): the router resolves
+  // the middleware when it builds the routes.
   Layer.provide(AuthorizationLive),
   Layer.provide(AppServices)
 )
 
-const ServerLive = Layer.unwrapEffect(
+const DocsRoute = HttpApiSwagger.layer(Api, { path: "/docs" })
+
+const ServerLive = Layer.unwrap(
   Effect.gen(function* () {
     const port = yield* AppConfig.port
-    return HttpApiBuilder.serve().pipe(
-      Layer.provide(HttpApiSwagger.layer()),
-      Layer.provide(ApiLive),
+    return HttpRouter.serve(Layer.mergeAll(ApiRoutes, DocsRoute)).pipe(
       Layer.provide(NodeHttpServer.layer(createServer, { port }))
     )
   })

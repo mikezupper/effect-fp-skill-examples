@@ -19,13 +19,13 @@ import { SqliteClient } from "@effect/sql-sqlite-node"
 
 // Fresh in-memory database per test — same repos, different SqlClient layer. No mocks.
 const TestLayer = Layer.mergeAll(
-  UserRepo.Default,
-  SessionRepo.Default,
-  ProductRepo.Default,
-  CartRepo.Default,
-  OrderRepo.Default,
-  PasswordHasher.Default,
-  IdGen.Default
+  UserRepo.layer,
+  SessionRepo.layer,
+  ProductRepo.layer,
+  CartRepo.layer,
+  OrderRepo.layer,
+  PasswordHasher.layer,
+  IdGen.layer
 ).pipe(
   Layer.provideMerge(MigrationsLive),
   Layer.provideMerge(SqliteClient.layer({ filename: ":memory:", ...sqlTransforms }))

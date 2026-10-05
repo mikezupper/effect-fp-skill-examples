@@ -1,6 +1,6 @@
 import { Array as Arr, Schema } from "effect"
 import type { CartLine } from "./cart.js"
-import { Cents, ProductId } from "./catalog.js"
+import { Cents, NonEmptyTrimmedString, ProductId } from "./catalog.js"
 import { Quantity } from "./cart.js"
 import { UserId } from "./user.js"
 
@@ -11,7 +11,7 @@ export type OrderId = typeof OrderId.Type
 // rewrite history.
 export class OrderLine extends Schema.Class<OrderLine>("OrderLine")({
   productId: ProductId,
-  name: Schema.NonEmptyTrimmedString,
+  name: NonEmptyTrimmedString,
   unitPriceCents: Cents,
   quantity: Quantity,
 }) {}
@@ -21,7 +21,8 @@ export class Order extends Schema.Class<Order>("Order")({
   userId: UserId,
   lines: Schema.NonEmptyArray(OrderLine), // an order with no lines is unrepresentable
   totalCents: Cents,
-  placedAt: Schema.DateTimeUtc,
+  // ISO string on the wire and in SQLite; DateTime.Utc in the domain.
+  placedAt: Schema.DateTimeUtcFromString,
 }) {}
 
 // ---------- Pure ----------

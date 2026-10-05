@@ -1,8 +1,8 @@
 # effect-fp-skill-examples
 
 [![CI](https://github.com/mikezupper/effect-fp-skill-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/mikezupper/effect-fp-skill-examples/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-CC_BY_4.0-lightgrey)](LICENSE)
-[![Effect](https://img.shields.io/badge/Effect-3.22-black)](https://effect.website)
+[![License: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/docs-CC_BY_4.0-lightgrey)](LICENSE-DOCS)
+[![Effect](https://img.shields.io/badge/Effect-4.0-black)](https://effect.website)
 [![Lit](https://img.shields.io/badge/Lit-3.3-324FFF?logo=lit&logoColor=white)](https://lit.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x_strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![ROP](https://img.shields.io/badge/errors-railway--oriented-orange)](https://fsharpforfunandprofit.com/rop/)
@@ -15,8 +15,8 @@ Three working applications that battle-test a set of [Claude Code skills](https:
 
 | App | What it is | Stack | Proves |
 |---|---|---|---|
-| [`shortlink/`](shortlink/) | URL shortener with expiring links | Effect, `@effect/platform` HttpApi | The core skill loop: brands, railway errors, TestClock, property tests |
-| [`ecommerce/`](ecommerce/) | Full commerce API — catalog, search, auth, cart, atomic checkout, order history | Effect, `@effect/sql` + SQLite | Domain modeling at scale, transactions on the error track, auth middleware |
+| [`shortlink/`](shortlink/) | URL shortener with expiring links | Effect 4, `effect/http-api` HttpApi | The core skill loop: brands, railway errors, TestClock, property tests |
+| [`ecommerce/`](ecommerce/) | Full commerce API — catalog, search, auth, cart, atomic checkout, order history | Effect 4, `effect/sql` + SQLite (`node:sqlite`) | Domain modeling at scale, transactions on the error track, auth middleware |
 | [`ecommerce-ui/`](ecommerce-ui/) | Server-rendered storefront over the ecommerce API | Lit 3, `@lit-labs/ssr`, Vite, modern CSS | SSR/CSR hybrid, hydration discipline, one-hue oklch design system |
 
 <p align="center">
@@ -94,7 +94,7 @@ A URL shortener with optional TTLs. Small on purpose: it demonstrates the entire
 
 ### 2. `ecommerce` — the skill at production scale
 
-Catalog, search, hierarchical category navigation, register/login, cart, checkout, order history. Real persistence (`@effect/sql` + SQLite), real auth (scrypt + bearer sessions), real transactional integrity.
+Catalog, search, hierarchical category navigation, register/login, cart, checkout, order history. Real persistence (`effect/sql` + `@effect/sql-sqlite-node`), real auth (scrypt + bearer sessions), real transactional integrity.
 
 The centerpiece is **checkout as a workflow-owned transaction**:
 
@@ -148,7 +148,7 @@ Each layer of the pyramid uses the cheapest tool that gives real confidence — 
 
 | Tier | Tool | Example from this repo |
 |---|---|---|
-| Pure domain properties | `Arbitrary.make(schema)` → FastCheck | Found that `buildCategoryTree` silently dropped self-parented categories — shrunk to a minimal counterexample automatically |
+| Pure domain properties | `it.prop` with arbitraries derived from the schemas | Found that `buildCategoryTree` silently dropped self-parented categories — shrunk to a minimal counterexample automatically |
 | Deterministic workflows | `it.effect` + `TestClock` + Layer-swapped fakes | Link expiry tested across 61 virtual minutes in ~10ms; checkout atomicity proven against in-memory SQLite |
 | Real-browser components | Vitest browser mode (Playwright/Chromium) | Shadow-DOM rendering, event composition, disabled states |
 | End-to-end | Playwright scripts | Register → cart → checkout → order history → search, asserting zero console errors — which is how every hydration bug was caught |
@@ -196,4 +196,4 @@ effect-fp-skill-examples/
 
 ## License
 
-Text, markup, and code licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) © Mike Zupper. The skills' engineering philosophy credits [Scott Wlaschin](https://fsharpforfunandprofit.com), [Effect](https://effect.website), and [Lit](https://lit.dev); none of them endorse this repo.
+Code licensed under the [MIT License](LICENSE); documentation (Markdown and the images under `docs/`) licensed under [CC BY 4.0](LICENSE-DOCS) © 2026 Mike Zupper. The skills' engineering philosophy credits [Scott Wlaschin](https://fsharpforfunandprofit.com), [Effect](https://effect.website), and [Lit](https://lit.dev); none of them endorse this repo.
